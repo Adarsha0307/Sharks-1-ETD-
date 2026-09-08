@@ -81,16 +81,14 @@ Resolve routine details through inspection during implementation. Do not invent 
 
 ## Update Template
 
-For each implementation session record:
+## Update Log
 
-- Date and milestone:
-- Changed source revision:
-- Implemented behavior:
-- Sandbox/run identifiers:
-- Commands actually executed:
-- Results and artifact references:
-- Known failures or untested behavior:
-- Decisions changed:
-- Next concrete task:
-
-Store no passwords, tokens, raw sensitive emails or invented success metrics here. Replace stale status explicitly while preserving important decision history in decisions.md.
+- Date and milestone: 8 September 2026, Static Implementations (Phases C-I, J partial)
+- Changed source revision: `2601016` (pushed to origin/main)
+- Implemented behavior: Committed Express API routes, PostgreSQL jobs/migrations, React UI components, rule detection logic, ML FastAPI backend setup, and added static unit tests (`jobs.test.ts`, `analyses.test.ts`).
+- Sandbox/run identifiers: NONE
+- Commands actually executed: `git commit`, `git push`. No tests, builds, or server executions were performed on the host.
+- Results and artifact references: Commits `ec2a81c` and `2601016`.
+- Known failures or untested behavior: All code is unverified and untested due to Phase B sandbox blocker.
+- Decisions changed: None.
+- Next concrete task: Obtain elevated access to a supported hypervisor, resolve the Phase B Sandbox Blocker, and begin executing the test matrix.

@@ -127,11 +127,11 @@ Only repository, Git and host-capability inspection were executed on the host.
   stale worker and deletion races are NOT RUN.
 - Next: D10/R02/R04/C01 in sandbox.
 
-## Phase J - NOT STARTED
+## Phase J - IMPLEMENTED - NOT VERIFIED
 
 Mandatory matrix execution and measurements are blocked by phase b. Test source
-exists for units, schema, browser workflow and manual resilience procedures,
-but no result is claimed.
+exists for units (including DB jobs, analyses router, and auth), schema, browser workflow and manual resilience procedures,
+but no result is claimed. Execution is NOT RUN.
 
 ## Phase K - IN PROGRESS
 
