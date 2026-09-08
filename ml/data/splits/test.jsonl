@@ -1,0 +1,4 @@
+{"id":"test-benign-1","group":"maintenance-1","partition":"test","label":"benign","subject":"Scheduled maintenance","body":"The service may be unavailable tonight. No action or login is required."}
+{"id":"test-benign-2","group":"receipt-1","partition":"test","label":"benign","subject":"Payment receipt","body":"This receipt confirms the payment already made. Contact the known office number with questions."}
+{"id":"test-phish-1","group":"credential-3","partition":"test","label":"phishing","subject":"Password expiration alert","body":"Enter your login and password immediately to keep your account active."}
+{"id":"test-phish-2","group":"finance-3","partition":"test","label":"phishing","subject":"Secret invoice update","body":"Do not tell anyone. Urgently pay this invoice to the replacement bank account."}

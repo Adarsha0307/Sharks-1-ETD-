@@ -1,0 +1,4 @@
+{"id":"validation-benign-1","group":"event-1","partition":"validation","label":"benign","subject":"Event reminder","body":"The campus event starts today. Registration is already complete."}
+{"id":"validation-benign-2","group":"payroll-info-1","partition":"validation","label":"benign","subject":"Payroll calendar","body":"The published payroll calendar is available on the bookmarked staff portal."}
+{"id":"validation-phish-1","group":"verify-2","partition":"validation","label":"phishing","subject":"Final notice","body":"Verify your account password right away or access will be removed."}
+{"id":"validation-phish-2","group":"wire-2","partition":"validation","label":"phishing","subject":"Private payment task","body":"Urgently transfer payment to a different beneficiary and keep this between us."}

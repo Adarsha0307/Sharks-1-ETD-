@@ -1,0 +1,45 @@
+{
+  "name": "@etd/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0 <23"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "worker": "node dist/worker.js",
+    "migrate": "tsx src/db/migrate.ts",
+    "user:create": "tsx src/scripts/create-user.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "busboy": "1.6.0",
+    "cookie-parser": "1.4.7",
+    "express": "5.1.0",
+    "express-rate-limit": "7.5.0",
+    "helmet": "8.1.0",
+    "htmlparser2": "10.0.0",
+    "mailauth": "4.8.2",
+    "mailparser": "3.7.2",
+    "pg": "8.16.0",
+    "tldts": "6.1.86",
+    "zod": "3.25.67"
+  },
+  "devDependencies": {
+    "@types/busboy": "1.5.4",
+    "@types/cookie-parser": "1.4.8",
+    "@types/express": "5.0.3",
+    "@types/mailparser": "3.4.6",
+    "@types/node": "22.15.32",
+    "@types/pg": "8.15.4",
+    "@types/supertest": "6.0.3",
+    "supertest": "7.1.1",
+    "tsx": "4.20.3",
+    "typescript": "5.8.3",
+    "vitest": "3.2.4"
+  }
+}

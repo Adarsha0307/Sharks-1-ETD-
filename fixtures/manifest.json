@@ -1,0 +1,12 @@
+{
+  "manifestVersion": "1",
+  "hashesVerified": false,
+  "note": "SHA-256 values must be generated and recorded inside the preparation VM before isolation.",
+  "fixtures": [
+    { "id": "benign-basic", "path": "eml/benign-basic.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
+    { "id": "credential-link", "path": "eml/credential-link.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-001", "ETD-SENDER-003", "ETD-URL-001", "ETD-URL-002", "ETD-URL-003", "ETD-CONTENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
+    { "id": "forged-auth-pass", "path": "eml/forged-auth-pass.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-002"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
+    { "id": "benign-third-party", "path": "eml/benign-third-party.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
+    { "id": "inert-double-extension", "path": "eml/inert-double-extension.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-ATTACHMENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null }
+  ]
+}

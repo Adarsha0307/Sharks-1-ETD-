@@ -1,0 +1,24 @@
+{
+  "manifestVersion": "1",
+  "language": "en",
+  "seed": 26106,
+  "sources": [
+    {
+      "id": "etd-synthetic-seed-v1",
+      "description": "Small project-authored synthetic corpus for pipeline verification only",
+      "license": "Repository license",
+      "synthetic": true,
+      "accuracyEvidence": false
+    }
+  ],
+  "deduplication": "Exact normalized subject/body hash and campaign group kept within one partition",
+  "partitions": {
+    "train": "splits/train.jsonl",
+    "validation": "splits/validation.jsonl",
+    "test": "splits/test.jsonl"
+  },
+  "limitations": [
+    "This seed corpus is too small and synthetic for real-world performance claims.",
+    "A reviewed, redistributable real-world corpus is still required before research targets can be assessed."
+  ]
+}

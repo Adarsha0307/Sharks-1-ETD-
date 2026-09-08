@@ -1,6 +1,6 @@
 # Project Memory — Email Threat Detector
 
-Updated: 7 September 2026  
+Updated: 8 September 2026
 Purpose: factual continuity for future coding sessions
 
 ## Confirmed User Requirements
@@ -32,12 +32,24 @@ The PRD baseline is v2.1. Supporting files are v1.0.
 
 ## Actual Implementation State
 
-- Product requirements and supporting documentation have been prepared.
-- No detector application repository has been inspected for this document task.
-- No application implementation is established by these documents.
-- No VM setup or container isolation has been verified.
-- No model has been trained or evaluated in this task.
-- No application tests or benchmarks have been executed.
+- The canonical repository was inspected at revision `a0ec3b2`; it initially
+  contained only the eight governing Markdown files and had a clean worktree.
+- Phase-a findings, requirement gaps, proposed versions and host capacity are
+  recorded in `docs/phase-a-audit.md`.
+- No application implementation was present at the start of phase a. Source has
+  since been prepared for the React UI, Express API/worker, PostgreSQL migration,
+  evidence ingestion/parsing, deterministic rules, authentication adapters,
+  explainable scoring, FastAPI ML service, Dockerfiles and restricted Compose.
+- Detailed honest status for phases a-k is recorded in
+  `docs/phase-status.md`. Phases b-i are not verified merely because source
+  exists.
+- No VM setup or container isolation has been verified. Hyper-V tooling, WSL,
+  Docker, VirtualBox, VMware CLI, QEMU and Multipass are unavailable from the
+  current unelevated host session.
+- No model has been trained or evaluated. The included corpus is synthetic and
+  is only for pipeline verification, not accuracy evidence.
+- No application tests, builds, migrations, fixture processing or benchmarks
+  have been executed because testing outside the verified sandbox is forbidden.
 - No public deployment, provider connection or mailbox access has been performed.
 
 Do not convert a design statement into a completed-work claim.
@@ -50,12 +62,10 @@ These are proposed implementation decisions recorded in decisions.md, not eviden
 
 ## Open Implementation Details
 
-- Actual repository path and source-control state.
-- Available RAM, CPU, disk and supported hypervisor.
-- Exact guest, runtime and library versions.
+- Exact resolved dependency versions, image digests and supported hypervisor.
 - Dataset sources, licenses, language coverage and split manifest.
 - Model artifact and measured performance.
-- Numeric scoring weights and validated thresholds.
+- Validation/evaluation of the initial numeric scoring weights and thresholds.
 - Actual parser/resource budgets and benchmark results.
 - Approved baseline snapshot identifier and isolation-check evidence.
 
@@ -63,12 +73,11 @@ Resolve routine details through inspection during implementation. Do not invent 
 
 ## Next Work
 
-1. Read all governing documents.
-2. Inspect repository and host capabilities without exposing secrets.
-3. Prepare and verify the test VM.
-4. Implement the smallest upload-to-findings workflow.
-5. Add detector layers and meaningful sandbox tests.
-6. Update this memory using verified outcomes.
+1. Obtain elevated access to a supported hypervisor and prepare Ubuntu VMs.
+2. Verify sandbox isolation before processing any fixture.
+3. Resolve lockfiles/build images in the preparation VM and cache them.
+4. Execute phases c-i tests and fix observed failures in the isolated test VM.
+5. Complete the phase-j matrix, actual metrics and clean-clone phase-k handoff.
 
 ## Update Template
 

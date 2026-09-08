@@ -1,0 +1,8 @@
+{"id":"train-benign-1","group":"routine-1","partition":"train","label":"benign","subject":"Meeting notes","body":"Attached are the notes from today's project meeting."}
+{"id":"train-benign-2","group":"library-1","partition":"train","label":"benign","subject":"Library reminder","body":"Your borrowed book is due next Tuesday. Sign in through the library bookmark if needed."}
+{"id":"train-benign-3","group":"invoice-1","partition":"train","label":"benign","subject":"Invoice received","body":"We received invoice 302. No payment account changes are requested."}
+{"id":"train-benign-4","group":"class-1","partition":"train","label":"benign","subject":"Class schedule","body":"Tomorrow's class begins at ten in room 204."}
+{"id":"train-phish-1","group":"credential-1","partition":"train","label":"phishing","subject":"Urgent account verification","body":"Your account expires today. Verify your password immediately using this link."}
+{"id":"train-phish-2","group":"payment-1","partition":"train","label":"phishing","subject":"Confidential wire change","body":"Keep this secret and wire the funds to our new bank account now."}
+{"id":"train-phish-3","group":"gift-1","partition":"train","label":"phishing","subject":"CEO request","body":"Buy gift cards immediately and do not call me. Send the codes privately."}
+{"id":"train-phish-4","group":"mailbox-1","partition":"train","label":"phishing","subject":"Mailbox suspended","body":"Login now with your credentials to prevent mailbox deletion."}

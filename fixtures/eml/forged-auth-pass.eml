@@ -1,0 +1,10 @@
+From: "Example University" <notices@unrelated.test>
+To: Analyst <analyst@example.edu>
+Date: Mon, 7 Sep 2026 12:00:00 +0000
+Message-ID: <forged-auth@unrelated.test>
+Authentication-Results: trusted.example; dkim=pass header.d=example.edu; spf=pass smtp.mailfrom=example.edu
+Subject: Routine notice
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+This uploaded pass header is deliberately untrusted test data.

@@ -1,0 +1,9 @@
+From: "Example University Alerts" <notify@vendor.test>
+To: Analyst <analyst@example.edu>
+Date: Mon, 7 Sep 2026 13:00:00 +0000
+Message-ID: <vendor-notice@vendor.test>
+Subject: Scheduled maintenance
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+The service will be unavailable tonight. No action is required.

@@ -1,0 +1,394 @@
+openapi: 3.1.0
+info:
+  title: SIH26106 Email Threat Detector API
+  version: 0.1.0
+  description: Standalone detector API. Risk index values are rankings, not probabilities.
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /health:
+    get:
+      operationId: health
+      responses:
+        '200':
+          description: Process is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /ready:
+    get:
+      operationId: readiness
+      responses:
+        '200':
+          description: Required dependencies are available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+        '503':
+          description: A required dependency is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+  /api/auth/login:
+    post:
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [username, password]
+              properties:
+                username: { type: string, minLength: 3, maxLength: 64 }
+                password: { type: string, minLength: 1, maxLength: 256 }
+      responses:
+        '200':
+          description: Session created in an HttpOnly cookie
+          headers:
+            Set-Cookie: { schema: { type: string } }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user, expiresInSeconds]
+                properties:
+                  user: { $ref: '#/components/schemas/User' }
+                  expiresInSeconds: { type: integer, minimum: 1 }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/auth/session:
+    get:
+      operationId: currentSession
+      security: [{ cookieSession: [] }]
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user]
+                properties:
+                  user: { $ref: '#/components/schemas/User' }
+        '401': { $ref: '#/components/responses/Error' }
+  /api/auth/logout:
+    post:
+      operationId: logout
+      security: [{ cookieSession: [], csrfToken: [] }]
+      responses:
+        '204': { description: Session revoked }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /api/emails:
+    post:
+      operationId: uploadEmail
+      security: [{ cookieSession: [], csrfToken: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [email]
+              properties:
+                email: { type: string, format: binary }
+      responses:
+        '202':
+          description: Original evidence preserved or same-owner duplicate located
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UploadAccepted' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+        '415': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+    get:
+      operationId: listEmails
+      security: [{ cookieSession: [] }]
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string, format: date-time }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Owner-scoped history
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, nextCursor]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/HistoryItem' }
+                  nextCursor: { type: [string, 'null'], format: date-time }
+        '401': { $ref: '#/components/responses/Error' }
+  /api/jobs/{jobId}:
+    get:
+      operationId: getJob
+      security: [{ cookieSession: [] }]
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Owner-scoped job state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/emails/{emailId}/analyses:
+    post:
+      operationId: reanalyzeEmail
+      security: [{ cookieSession: [], csrfToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/EmailId'
+      responses:
+        '202':
+          description: Immutable reanalysis queued
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [emailId, jobId]
+                properties:
+                  emailId: { type: string, format: uuid }
+                  jobId: { type: string, format: uuid }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/emails/{emailId}:
+    delete:
+      operationId: deleteEmail
+      security: [{ cookieSession: [], csrfToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/EmailId'
+      responses:
+        '204': { description: Live evidence revoked and pending work cancelled }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/emails/{emailId}/evidence/integrity:
+    get:
+      operationId: getEvidenceIntegrity
+      security: [{ cookieSession: [] }]
+      parameters:
+        - $ref: '#/components/parameters/EmailId'
+      responses:
+        '200':
+          description: Integrity metadata without a filesystem path or download URL
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [evidenceId, sha256, byteSize]
+                properties:
+                  evidenceId: { type: string, format: uuid }
+                  sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
+                  byteSize: { type: integer, minimum: 0 }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/analyses/{analysisId}:
+    get:
+      operationId: getAnalysis
+      security: [{ cookieSession: [] }]
+      parameters:
+        - $ref: '#/components/parameters/AnalysisId'
+      responses:
+        '200':
+          description: Immutable owner-scoped analysis
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Analysis' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/analyses/{analysisId}/export:
+    post:
+      operationId: exportAnalysis
+      security: [{ cookieSession: [], csrfToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/AnalysisId'
+      responses:
+        '200':
+          description: Permission-checked JSON export
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [exportVersion, exportedAt, analysis]
+                properties:
+                  exportVersion: { const: '1' }
+                  exportedAt: { type: string, format: date-time }
+                  analysis: { $ref: '#/components/schemas/Analysis' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    cookieSession:
+      type: apiKey
+      in: cookie
+      name: etd_session
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+  schemas:
+    UploadAccepted:
+      type: object
+      additionalProperties: false
+      required: [emailId, jobId, duplicate]
+      properties:
+        emailId: { type: string, format: uuid }
+        jobId: { type: string, format: uuid }
+        duplicate: { type: boolean }
+    Job:
+      type: object
+      required: [jobId, emailId, status, stage, attemptCount, maxAttempts, errorCode, errorMessage, analysisId, createdAt, updatedAt]
+      properties:
+        jobId: { type: string, format: uuid }
+        emailId: { type: string, format: uuid }
+        status: { enum: [queued, processing, retrying, completed, partial, failed, cancelled] }
+        stage: { enum: [queued, parsing, analysing, persisting, completed, partial, failed, cancelled] }
+        attemptCount: { type: integer, minimum: 0 }
+        maxAttempts: { type: integer, minimum: 1 }
+        errorCode: { type: [string, 'null'] }
+        errorMessage: { type: [string, 'null'] }
+        analysisId: { type: [string, 'null'], format: uuid }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    HistoryItem:
+      type: object
+      required: [emailId, originalFilename, sha256, byteSize, state, createdAt, analysisId, analysisVersion, riskIndex, riskBand, completeness, subject]
+      properties:
+        emailId: { type: string, format: uuid }
+        originalFilename: { type: string }
+        sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
+        byteSize: { type: integer, minimum: 0 }
+        state: { type: string }
+        createdAt: { type: string, format: date-time }
+        analysisId: { type: [string, 'null'], format: uuid }
+        analysisVersion: { type: [integer, 'null'] }
+        riskIndex: { type: [integer, 'null'], minimum: 0, maximum: 100 }
+        riskBand: { type: [string, 'null'] }
+        completeness: { type: [string, 'null'] }
+        subject: { type: [string, 'null'] }
+    Analysis:
+      type: object
+      required: [analysisId, emailId, version, engineVersion, rulesVersion, scoringVersion, modelVersion, status, riskIndex, riskBand, completeness, evidenceConfidence, observations, authentication, scoreBreakdown, mlResult, limitations, createdAt, findings]
+      properties:
+        analysisId: { type: string, format: uuid }
+        emailId: { type: string, format: uuid }
+        version: { type: integer, minimum: 1 }
+        engineVersion: { type: string }
+        rulesVersion: { type: string }
+        scoringVersion: { type: string }
+        modelVersion: { type: [string, 'null'] }
+        status: { enum: [completed, partial, inconclusive] }
+        riskIndex: { type: [integer, 'null'], minimum: 0, maximum: 100 }
+        riskBand: { type: [string, 'null'] }
+        completeness: { enum: [complete, partial, insufficient] }
+        evidenceConfidence: { enum: [low, medium, high] }
+        observations: { type: object }
+        authentication: { type: object }
+        scoreBreakdown: { type: object }
+        mlResult: { type: object }
+        limitations: { type: array, items: { type: string } }
+        createdAt: { type: string, format: date-time }
+        findings:
+          type: array
+          items: { $ref: '#/components/schemas/Finding' }
+    Finding:
+      type: object
+      required: [findingId, ruleId, ruleVersion, category, severity, evidenceRefs, explanation, limitations, recommendedAction, scoreContribution]
+      properties:
+        findingId: { type: string, format: uuid }
+        ruleId: { type: string }
+        ruleVersion: { type: string }
+        category: { enum: [sender, url, content, attachment] }
+        severity: { enum: [info, low, medium, high] }
+        evidenceRefs: { type: array, items: { type: object } }
+        explanation: { type: string }
+        limitations: { type: array, items: { type: string } }
+        recommendedAction: { type: string }
+        scoreContribution: { type: integer }
+    User:
+      type: object
+      additionalProperties: false
+      required: [id, username]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+    Health:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status: { const: ok }
+    Readiness:
+      type: object
+      additionalProperties: false
+      required: [status, dependencies]
+      properties:
+        status: { enum: [ready, not_ready] }
+        dependencies:
+          type: object
+          additionalProperties: false
+          required: [database]
+          properties:
+            database: { enum: [available, unavailable] }
+    Error:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message, requestId]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            requestId: { type: string, format: uuid }
+  responses:
+    Error:
+      description: Safe structured error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      schema: { type: string, format: uuid }
+    EmailId:
+      in: path
+      name: emailId
+      required: true
+      schema: { type: string, format: uuid }
+    AnalysisId:
+      in: path
+      name: analysisId
+      required: true
+      schema: { type: string, format: uuid }

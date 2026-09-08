@@ -120,6 +120,72 @@ Isolation, authorization, evidence integrity and safe rendering are mandatory ga
 
 Consequence: missing the precision goal is reported honestly; passing a benchmark does not excuse an access-control defect.
 
+## ADR-013 — Initial Version and Workspace Strategy
+
+Status: Selected for implementation on 8 September 2026; not yet resolved or
+tested in the sandbox.
+
+Use Ubuntu 24.04 LTS, Node.js 22 LTS, PostgreSQL 16 and Python 3.12 as the
+runtime baseline. Use npm workspaces for `backend` and `frontend`, exact direct
+dependency pins plus a shared npm lockfile, and hash-locked Python requirements
+generated in the preparation VM. Keep explicit SQL migrations in `backend`.
+
+Reason: these conservative supported runtime lines satisfy the required stack
+without adding another package manager or migration service.
+
+Consequence: exact patch compatibility, transitive locks and image digests
+must be established in the connected preparation VM and then verified offline;
+the current host cannot be used as substitute test evidence.
+
+## ADR-014 — Explicit Phase Order Reconciliation
+
+Status: Confirmed on 8 September 2026.
+
+Follow the user's current phases a through k. In particular, implement session
+security, authorization, CSRF and request limiting in phase c even though the
+older `agent.md` implementation-order summary groups some hardening later.
+
+Reason: the latest explicit instruction takes precedence and is consistent
+with the PRD's required scope.
+
+Consequence: phase c is larger, while phase j remains the full adversarial and
+resilience verification gate.
+
+## ADR-015 — Offline Parsing And No Reputation Fetch
+
+Status: Implemented in source on 8 September 2026; not verified.
+
+Extract and normalize HTTP(S) destinations locally using URL and registrable-
+domain parsing. Do not send email-supplied URLs to any destination or reputation
+provider in the baseline. Preserve originals in the immutable analysis and
+defang them in the UI/export.
+
+Consequence: URL syntax/deception rules remain available offline, while live
+reputation is explicitly unavailable rather than fabricated.
+
+## ADR-016 — Synthetic ML Seed Is Not Accuracy Evidence
+
+Status: Confirmed on 8 September 2026.
+
+Keep a tiny project-authored fixed corpus solely to exercise deterministic
+training/inference plumbing. It must never support a quality claim. A reviewed,
+redistributable real-world dataset with provenance/license and campaign-aware
+deduplication is required before research metrics are accepted.
+
+Consequence: phase-h source can be implemented, but its exit gate remains unmet
+until approved data and actual sandbox evaluation exist.
+
+## ADR-017 — Sanitized Export Uses CSRF-Protected POST
+
+Status: Implemented in source on 8 September 2026; not verified.
+
+Generate JSON export through an owner-authorized, CSRF-protected POST. Redact
+bodies, raw headers and recipient lists; defang URL originals. Retain evidence
+references, versions, findings and limitations needed to explain the result.
+
+Consequence: a browser navigation cannot trigger export with only the session
+cookie, and exported reports still require controlled analyst inspection.
+
 ## Revision Procedure
 
 Add a dated entry with decision ID, triggering evidence, alternatives, selected change, affected requirements and required tests. User scope changes must be reflected in prd.md; do not alter scope through this log alone.

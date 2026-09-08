@@ -1,0 +1,167 @@
+name: etd-lab
+
+x-app-security: &app-security
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt:
+    - no-new-privileges:true
+  pids_limit: 128
+  restart: unless-stopped
+  logging:
+    driver: local
+    options:
+      max-size: 10m
+      max-file: "3"
+
+services:
+  postgres:
+    image: postgres:16.9-bookworm
+    pull_policy: never
+    environment:
+      POSTGRES_DB: etd
+      POSTGRES_USER: etd_app
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    networks: [data]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+      - /run:size=16m,mode=0755
+    shm_size: 128m
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 0.75
+    pids_limit: 128
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    logging:
+      driver: local
+      options: { max-size: 10m, max-file: "3" }
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U etd_app -d etd"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    <<: *app-security
+    image: etd-backend:local
+    pull_policy: never
+    command: ["node", "backend/dist/db/migrate.js"]
+    environment: &backend-environment
+      NODE_ENV: sandbox
+      DATABASE_URL: postgresql://etd_app:${DB_PASSWORD}@postgres:5432/etd
+      EVIDENCE_ROOT: /var/lib/etd/evidence
+      ALLOWED_ORIGIN: http://127.0.0.1:8080
+      SESSION_TTL_MINUTES: "480"
+      COOKIE_SECURE: "false"
+      TRUST_PROXY: "true"
+      ML_URL: http://ml:8000
+      MODEL_MANIFEST_PATH: /models/model-manifest.json
+      DNS_FIXTURE_PATH: /app/fixtures/dns.json
+      PROTECTED_DOMAINS: ${PROTECTED_DOMAINS:-example.edu}
+      PROTECTED_ORGANIZATIONS: ${PROTECTED_ORGANIZATIONS:-Example University}
+      AUTHORIZED_SENDERS: ${AUTHORIZED_SENDERS:-vendor.test:example.edu}
+    networks: [data]
+    volumes:
+      - evidence:/var/lib/etd/evidence
+      - model-artifacts:/models:ro
+    tmpfs: [/tmp:size=32m,mode=1777]
+    mem_limit: 256m
+    memswap_limit: 256m
+    cpus: 0.25
+    restart: "no"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    <<: *app-security
+    image: etd-backend:local
+    pull_policy: never
+    environment: *backend-environment
+    networks: [gateway, data]
+    volumes:
+      - evidence:/var/lib/etd/evidence
+      - model-artifacts:/models:ro
+    tmpfs: [/tmp:size=64m,mode=1777]
+    mem_limit: 384m
+    memswap_limit: 384m
+    cpus: 0.5
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  worker:
+    <<: *app-security
+    image: etd-backend:local
+    pull_policy: never
+    command: ["node", "backend/dist/worker.js"]
+    environment: *backend-environment
+    networks: [data, inference]
+    volumes:
+      - evidence:/var/lib/etd/evidence
+      - model-artifacts:/models:ro
+    tmpfs: [/tmp:size=128m,mode=1777]
+    mem_limit: 640m
+    memswap_limit: 640m
+    cpus: 1.0
+    pids_limit: 96
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      ml: { condition: service_started }
+
+  ml:
+    <<: *app-security
+    image: etd-ml:local
+    pull_policy: never
+    environment:
+      MODEL_MANIFEST_PATH: /models/model-manifest.json
+    networks: [inference]
+    volumes:
+      - model-artifacts:/models:ro
+    tmpfs: [/tmp:size=64m,mode=1777]
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 1.0
+    pids_limit: 64
+
+  gateway:
+    <<: *app-security
+    image: etd-frontend:local
+    pull_policy: never
+    networks: [gateway]
+    ports:
+      - "127.0.0.1:8080:8080"
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /var/cache/nginx:size=32m,mode=0755,uid=101,gid=101
+      - /var/run:size=4m,mode=0755,uid=101,gid=101
+    mem_limit: 128m
+    memswap_limit: 128m
+    cpus: 0.25
+    pids_limit: 48
+    depends_on:
+      api: { condition: service_started }
+
+networks:
+  gateway:
+    internal: true
+  data:
+    internal: true
+  inference:
+    internal: true
+
+volumes:
+  postgres-data:
+    labels: { org.sih26106.etd.scope: lab }
+  evidence:
+    labels: { org.sih26106.etd.scope: lab }
+  model-artifacts:
+    external: true
+    name: etd-model-artifacts
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt

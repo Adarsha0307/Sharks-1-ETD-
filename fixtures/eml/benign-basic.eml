@@ -1,0 +1,9 @@
+From: "Example University Library" <library@example.edu>
+To: Analyst <analyst@example.edu>
+Date: Mon, 7 Sep 2026 10:00:00 +0000
+Message-ID: <benign-basic@example.edu>
+Subject: Library due-date reminder
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Your borrowed book is due next Tuesday. No payment or password action is required.

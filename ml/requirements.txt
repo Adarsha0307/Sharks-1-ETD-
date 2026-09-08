@@ -1,0 +1,11 @@
+# Direct versions selected for the preparation VM. This is not yet a
+# transitive hash lock; phase k must regenerate it with hashes after sandbox
+# compatibility verification.
+fastapi==0.115.12
+joblib==1.4.2
+numpy==2.2.6
+pydantic==2.11.7
+scikit-learn==1.6.1
+uvicorn==0.34.3
+pytest==8.4.1
+httpx==0.28.1
