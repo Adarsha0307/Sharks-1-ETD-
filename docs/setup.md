@@ -18,11 +18,15 @@ the isolated run.
    upgrade major versions.
 5. Build `etd-backend:local`, `etd-frontend:local`, and `etd-ml:local` from the
    Dockerfiles. Cache PostgreSQL 16.9 and matching Playwright Chromium.
-6. Train the model only after an approved dataset manifest is installed. The
-   included synthetic seed corpus can prove pipeline execution but cannot be
-   used as real-world accuracy evidence.
-7. Install `model-manifest.json` and its colocated artifact into the external
-   Docker volume `etd-model-artifacts` and validate SHA-256.
+6. Cache the reviewed dataset, fixed splits and training dependencies, but do
+   not train or evaluate a model in the connected preparation VM. `prd.md`,
+   `rules.md` and `testing.md` require those executable actions to run only
+   after isolation preflight passes in `etd-test`.
+7. Create the empty external Docker volume `etd-model-artifacts` so offline
+   Compose startup fails closed if the named volume is missing. After preflight,
+   train/evaluate in `etd-test`, approve the resulting artifact, install its
+   `model-manifest.json` and colocated artifact into that volume, and validate
+   SHA-256. The synthetic seed corpus proves plumbing only, not accuracy.
 8. Generate SHA-256 values for every fixture and update `fixtures/manifest.json`
    before cloning the test VM.
 
