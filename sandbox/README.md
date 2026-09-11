@@ -1,6 +1,6 @@
 # Isolated Test VM Runbook
 
-Status: prepared, not executed
+Status: preparation VM installed; test VM and isolation verification pending
 
 This runbook establishes the verification boundary required by `prd.md`. The
 sandbox is for testing the detector with synthetic or authorized email, not for
@@ -11,8 +11,10 @@ as PASS.
 
 Use a maintained hypervisor that supports Ubuntu Server 24.04 LTS, powered-off
 snapshots, complete virtual-NIC detachment, and disabled guest integration.
-VirtualBox is a practical option on Windows 11 Home; Hyper-V is acceptable only
-where its management features are supported and independently inspectable.
+VirtualBox is the selected hypervisor on this Windows 11 Home host. Version
+7.2.16 is installed and `VBoxManage list hostinfo` reports hardware
+virtualization support. Docker Desktop 4.90.0 with WSL 2 was also verified
+operational during host preparation, but it is not the outer test boundary.
 
 Create two separate VMs:
 
@@ -20,6 +22,24 @@ Create two separate VMs:
   binaries and images. It never processes email fixtures.
 - `etd-test`: cloned from a clean preparation point, with every virtual NIC
   removed or marked disconnected before any fixture enters it.
+
+Host-side helper scripts are available under `sandbox/virtualbox/`. Download and
+verify the Ubuntu Server ISO first, create an inspected VM storage directory,
+then run `create-vms.ps1` to create only `etd-prepare`. After preparation is
+complete and that VM is powered off, `clone-test-vm.ps1` creates and hardens
+`etd-test`. The scripts refuse to replace existing VMs and do not silently
+delete unrelated VirtualBox resources.
+
+Example host commands, from the repository root in PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Path "E:\VirtualBox VMs"
+.\sandbox\virtualbox\create-vms.ps1 -IsoPath "E:\ISO\ubuntu-24.04.4-live-server-amd64.iso"
+```
+
+The script verifies Canonical's published SHA-256 when that exact ISO filename
+is supplied. Do not create `etd-test` until the preparation VM is complete and
+powered off.
 
 Allocate `etd-test` four vCPUs, 6 GiB RAM, a dynamically allocated 40 GiB disk,
 and no virtual GPU acceleration. The inspected host has approximately 15.7 GiB
@@ -45,9 +65,10 @@ npm/Python dependency locks. Build `etd-backend:local`, `etd-frontend:local`,
 and `etd-ml:local` from source. Pull the pinned PostgreSQL image and record every
 image ID and repository digest. Because `pull_policy: never` is set, a missing
 cache will fail closed in the test VM. Cache Playwright's matching Chromium
-binary and OS dependencies once browser tests are added. Train or install only
-the approved model artifact and record its manifest/hash. Verify every fixture
-manifest hash.
+binary and OS dependencies once browser tests are added. Cache reviewed model
+training inputs and dependencies, but do not train or evaluate in this connected
+VM. `prd.md`, `rules.md` and `testing.md` require training and evaluation after
+isolation preflight in `etd-test`. Verify every fixture manifest hash.
 
 Create an offline bundle containing only the Git source archive, reviewed
 package caches/locks, saved OCI images, browser cache, model artifact/manifest,
@@ -85,11 +106,14 @@ it; both files remain ignored by Git and must contain no reused credential.
 Provision analyst passwords through `ETD_PROVISION_PASSWORD` without command
 line arguments or logs.
 
-Install the approved model into the named external volume before preflight. Its
-contents must include `model-manifest.json` and the colocated artifact named by
-that manifest. Create the volume explicitly as `etd-model-artifacts`; preflight
-fails closed if it is absent. This volume is retained by application-only reset
-and is replaced only through the controlled model-install procedure.
+Create the named external volume `etd-model-artifacts` before preflight;
+preflight fails closed if it is absent. It may be empty during the isolation
+gate because `/health` does not claim model readiness. After preflight passes,
+train/evaluate with cached inputs inside `etd-test`, review the result, and
+install `model-manifest.json` plus its colocated artifact into this volume.
+Restart the ML service and require `/ready` to pass before ML workflow tests.
+The volume is retained by application-only reset and is replaced only through
+the controlled model-install procedure.
 
 ## 4. Phase-B Preflight
 
@@ -144,9 +168,13 @@ offline virtual disk. Power off before attaching or detaching transfer media.
 Never establish a permanent host share. Record report hash, reviewer, run ID
 and transfer time.
 
-## Current Blocker
+## Current State
 
-This workspace cannot create or inspect the required VM: no supported
-hypervisor CLI or Docker installation is available and Windows feature queries
-require elevated access. Consequently no preflight, container startup, package
-test, model training, fixture processing or browser automation has been run.
+Host virtualization prerequisites are present, and the Ubuntu 24.04.4
+`etd-prepare` VM is registered and running with its installation medium ejected.
+The user reports successful console login as `adarsha`, hostname `etd-prepare`,
+and approximately 30 GiB free on `/`; these guest facts have not been observed
+through an automated guest channel. The only confirmed access mechanism is the
+VirtualBox GUI console. Project transfer and dependency preparation are not
+confirmed. `etd-test`, isolation preflight, application tests, model training,
+fixture processing and browser automation remain NOT RUN.

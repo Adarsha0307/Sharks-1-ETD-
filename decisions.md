@@ -186,6 +186,28 @@ references, versions, findings and limitations needed to explain the result.
 Consequence: a browser navigation cannot trigger export with only the session
 cookie, and exported reports still require controlled analyst inspection.
 
+## ADR-018 — VirtualBox Is The Concrete Host Hypervisor
+
+Status: Selected on 10 September 2026; preparation guest installed, test-guest
+isolation not yet verified.
+
+Use Oracle VirtualBox 7.2.16 on the Windows 11 Home host for the separate
+`etd-prepare` and `etd-test` Ubuntu 24.04 LTS VMs. Docker Desktop/WSL 2 may
+support host-side preparation, but they are not accepted as the outer hostile-
+input test boundary.
+
+Reason: VirtualBox is installed, its host drivers are running, its CLI can
+inspect effective VM configuration, it supports powered-off snapshots and it
+can remove every test-guest NIC. This implements ADR-002 without weakening the
+PRD requirement for a separately inspectable disconnected Linux VM.
+
+Consequence: dependencies are fetched only in `etd-prepare`; model training and
+evaluation remain reserved for the isolated `etd-test` under the stricter PRD,
+rules and testing requirements. `etd-test` is created from the powered-off
+prepared machine and hardened with every NIC slot, clipboard, drag-and-drop,
+USB, audio and recording disabled. Phase B remains in progress until host
+inspection and guest preflight both pass.
+
 ## Revision Procedure
 
 Add a dated entry with decision ID, triggering evidence, alternatives, selected change, affected requirements and required tests. User scope changes must be reflected in prd.md; do not alter scope through this log alone.

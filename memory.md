@@ -1,6 +1,6 @@
 # Project Memory — Email Threat Detector
 
-Updated: 8 September 2026
+Updated: 11 September 2026
 Purpose: factual continuity for future coding sessions
 
 ## Confirmed User Requirements
@@ -43,9 +43,14 @@ The PRD baseline is v2.1. Supporting files are v1.0.
 - Detailed honest status for phases a-k is recorded in
   `docs/phase-status.md`. Phases b-i are not verified merely because source
   exists.
-- No VM setup or container isolation has been verified. Hyper-V tooling, WSL,
-  Docker, VirtualBox, VMware CLI, QEMU and Multipass are unavailable from the
-  current unelevated host session.
+- Host virtualization prerequisites are now available. Docker Desktop 4.90.0
+  with Linux engine 29.7.2 through WSL 2 was verified operational during host
+  preparation, and VirtualBox 7.2.16 is installed
+  with running drivers and reported hardware-virtualization support. The
+  Ubuntu 24.04.4 `etd-prepare` VM is registered and running. The user reports a
+  successful console login, expected hostname and approximately 30 GiB free;
+  there is no automated guest-access channel yet. `etd-test` and its isolation
+  are not yet verified.
 - No model has been trained or evaluated. The included corpus is synthetic and
   is only for pipeline verification, not accuracy evidence.
 - No application tests, builds, migrations, fixture processing or benchmarks
@@ -73,9 +78,11 @@ Resolve routine details through inspection during implementation. Do not invent 
 
 ## Next Work
 
-1. Obtain elevated access to a supported hypervisor and prepare Ubuntu VMs.
-2. Verify sandbox isolation before processing any fixture.
-3. Resolve lockfiles/build images in the preparation VM and cache them.
+1. Transfer an inspected source bundle to the installed `etd-prepare` through
+   temporary removable media, then detach it.
+2. Resolve lockfiles/build images in the preparation VM and cache them without
+   processing fixtures or training/evaluating the model.
+3. Clone `etd-test`, disable every virtual NIC/integration, and verify isolation.
 4. Execute phases c-i tests and fix observed failures in the isolated test VM.
 5. Complete the phase-j matrix, actual metrics and clean-clone phase-k handoff.
 
@@ -91,4 +98,14 @@ Resolve routine details through inspection during implementation. Do not invent 
 - Results and artifact references: Commits `ec2a81c` and `2601016`.
 - Known failures or untested behavior: All code is unverified and untested due to Phase B sandbox blocker.
 - Decisions changed: None.
-- Next concrete task: Obtain elevated access to a supported hypervisor, resolve the Phase B Sandbox Blocker, and begin executing the test matrix.
+- Next concrete task at that time: obtain elevated access to a supported hypervisor and begin Phase B. This was superseded by the 10 September entry below.
+
+- Date and milestone: 10-11 September 2026, Phase B host prerequisites and preparation VM
+- Changed source revision: documentation/provisioning changes pending commit
+- Implemented behavior: Installed and inspected VirtualBox 7.2.16; verified Docker Desktop 4.90.0, Linux engine 29.7.2 and WSL 2 operation during host preparation; added fail-closed VirtualBox preparation/test VM helpers.
+- Sandbox/run identifiers: `etd-prepare` UUID `0bf12794-55af-4ee9-ba6d-50379827ac6a`; no test run ID
+- Commands actually executed: host-only Docker/WSL/VirtualBox installation and capability inspection. No detector command, test, model training or fixture processing was executed.
+- Results and artifact references: `sandbox/reports/phase-status.md`; `sandbox/virtualbox/`
+- Known failures or untested behavior: project transfer, dependency preparation, `etd-test` NIC detachment, preflight, snapshots, image builds and all application verification remain NOT RUN.
+- Decisions changed: VirtualBox selected as the concrete Windows 11 Home hypervisor implementing ADR-002.
+- Next concrete task: transfer the inspected working tree into the installed preparation VM and install reviewed dependencies. The user reports Ubuntu installation/login complete; only the GUI console is currently confirmed.

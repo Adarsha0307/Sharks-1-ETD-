@@ -1,6 +1,6 @@
 # Implementation Phase Status
 
-Updated: 8 September 2026
+Updated: 11 September 2026
 
 No executable application command has been run outside the required sandbox.
 Only repository, Git and host-capability inspection were executed on the host.
@@ -18,18 +18,27 @@ Only repository, Git and host-capability inspection were executed on the host.
 - Blocker: supported VM/hypervisor and Docker unavailable.
 - Next: phase b isolation.
 
-## Phase B - BLOCKED
+## Phase B - IN PROGRESS
 
 - Objective: dedicated disconnected Ubuntu VM with restricted containers.
 - Implemented behavior: restricted Compose source, VM runbook, host checklist,
-  preflight, scoped reset and evidence ledger are prepared.
+  preflight, scoped reset, evidence ledger and fail-closed VirtualBox VM
+  provisioning/inspection helpers are prepared.
 - Files: `sandbox/compose.yaml`, `sandbox/README.md`,
   `sandbox/hypervisor-checklist.md`, `sandbox/preflight.sh`, `sandbox/reset.sh`.
-- Sandbox checks run: none.
-- Result: IMPLEMENTED - NOT VERIFIED source only.
-- Blocker: no supported VM/hypervisor CLI or elevated feature inspection.
-- Next: obtain approved virtualization access, cache artifacts in preparation
-  VM, detach test VM NICs, then execute S01/S02 and snapshot/reset checks.
+- Host checks run: Docker Desktop 4.90.0/engine 29.7.2 and WSL 2 were verified
+  operational during host preparation;
+  VirtualBox 7.2.16 reports hardware virtualization support; the official
+  Ubuntu ISO size/hash and the registered running VM configuration were directly
+  re-inspected. The user reports Ubuntu 24.04.4 installation and console login.
+- Result: host prerequisites VERIFIED; preparation guest INSTALLED (login and
+  filesystem facts user-reported); test-guest isolation NOT VERIFIED.
+- Blocker: project transfer/dependency preparation are not confirmed, and
+  `etd-test` does not exist. No application test or fixture processing is
+  permitted yet.
+- Next: transfer an inspected source bundle through temporary media, prepare
+  reviewed dependencies/images, clone with all test NICs disabled, then execute
+  S01/S02 and snapshot/reset checks.
 
 ## Phase C - IMPLEMENTED - NOT VERIFIED
 

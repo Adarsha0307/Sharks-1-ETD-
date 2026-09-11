@@ -85,18 +85,22 @@ export async function analyzeAuthentication(
   const alignedDkim = Boolean(fromDomain && dkimPasses.some((item) => item.domain && aligned(item.domain, fromDomain)));
   const smtpDomain = smtpContext?.envelopeFrom.split("@").at(-1)?.toLowerCase() ?? null;
   const alignedSpf = Boolean(fromDomain && smtpDomain && spfCheck.state === "pass" && aligned(smtpDomain, fromDomain));
-  const dmarcSupported = Boolean(fixtureResolver && fromDomain && (alignedDkim || alignedSpf));
+  const dmarcAlignmentSupported = Boolean(fixtureResolver && fromDomain && (alignedDkim || alignedSpf));
+  const dmarcEvidence = [
+    ...(alignedDkim ? ["an independently verified DKIM signature aligned with the From domain"] : []),
+    ...(alignedSpf ? ["an independently verified SPF result aligned with the From domain"] : []),
+  ];
   checks.push(
     check(
       "dmarc",
-      dmarcSupported ? "pass" : "unverifiable",
-      dmarcSupported
-        ? `DMARC alignment is supported by independently verified ${alignedDkim ? "DKIM" : "SPF"} evidence and injected local DNS policy context.`
+      "unverifiable",
+      dmarcAlignmentSupported
+        ? `DMARC was not evaluated as pass or fail. Alignment evidence is available because ${dmarcEvidence.join(" and ")} was verified under the injected local DNS/SMTP fixture.`
         : "DMARC alignment was not evaluated because no independently verified aligned SPF or DKIM result is available.",
       parsed.from ? [parsed.from.evidenceRef] : [],
-      dmarcSupported,
-      dmarcSupported
-        ? "This pass uses injected local DNS/SMTP fixtures and is not live-provider verification."
+      dmarcAlignmentSupported,
+      dmarcAlignmentSupported
+        ? "This is fixture-scoped alignment evidence only. No DMARC policy record was evaluated and no DMARC verdict is asserted."
         : "DMARC is not inferred from an uploaded Authentication-Results header.",
     ),
   );

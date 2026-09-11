@@ -20,3 +20,12 @@ ml/artifacts/*.json
 fixtures/generated/
 sandbox/reports/runtime/
 sandbox/secrets/
+*.iso
+*.vdi
+*.vmdk
+*.vbox
+*.vbox-prev
+*.sav
+*.ova
+*.ovf
+Snapshots/
