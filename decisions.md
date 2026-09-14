@@ -208,6 +208,27 @@ prepared machine and hardened with every NIC slot, clipboard, drag-and-drop,
 USB, audio and recording disabled. Phase B remains in progress until host
 inspection and guest preflight both pass.
 
+## ADR-019 - Candidate Email Corpora Are Not Interchangeable
+
+Status: Selected on 13 September 2026; sanitized fixed corpus not yet approved.
+
+Do not merge or directly train on either user-provided aggregate. Prefer only
+provenance-preserving, phishing-specific subsets after per-source license
+resolution, privacy cleaning, label adjudication and campaign-aware
+deduplication. Nazario is the strongest current positive candidate; broad
+spam/ham positives are excluded unless separately relabeled.
+
+Reason: direct preparation-VM inspection found that both distributions define
+their positive class as phishing/spam, their source corpora substantially
+overlap, the Hugging Face supplied splits leak normalized content, and several
+original sources impose research-only or privacy restrictions that an aggregate
+license cannot override.
+
+Consequence: raw corpora remain outside Git. Only aggregate audit evidence and
+the review methodology may be retained. Fixed sanitized splits may be prepared
+in `etd-prepare`, but training/evaluation remains blocked until `etd-test`
+passes isolation preflight.
+
 ## Revision Procedure
 
 Add a dated entry with decision ID, triggering evidence, alternatives, selected change, affected requirements and required tests. User scope changes must be reflected in prd.md; do not alter scope through this log alone.

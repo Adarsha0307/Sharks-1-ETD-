@@ -109,3 +109,25 @@ Resolve routine details through inspection during implementation. Do not invent 
 - Known failures or untested behavior: project transfer, dependency preparation, `etd-test` NIC detachment, preflight, snapshots, image builds and all application verification remain NOT RUN.
 - Decisions changed: VirtualBox selected as the concrete Windows 11 Home hypervisor implementing ADR-002.
 - Next concrete task: transfer the inspected working tree into the installed preparation VM and install reviewed dependencies. The user reports Ubuntu installation/login complete; only the GUI console is currently confirmed.
+
+- Date and milestone: 12-13 September 2026, connected preparation and dataset review
+- Changed source revision: work began from `16d2380`; dependency locks and
+  reproduced build fixes are being incorporated on the checkpoint branch.
+- Implemented behavior: established temporary key-based SSH/NAT access to
+  `etd-prepare`; transferred and verified a complete Git bundle; installed
+  reviewed tools; generated npm and Python dependency locks; cached Playwright
+  Chromium; downloaded and inspected user-provided dataset candidates.
+- Sandbox/run identifiers: preparation only; no test run ID.
+- Commands actually executed: checksum verification, dependency resolution,
+  package installation, data extraction and aggregate offline data inspection.
+  The first packaging build reproduced TypeScript compile errors. Minimal fixes
+  were applied and all three local application images then built successfully.
+  No detector test, email fixture processing, model training or model evaluation
+  ran.
+- Results and artifact references: `docs/dataset-candidate-review.md`; raw data
+  and aggregate audit remain under `/home/adarsha/etd-datasets/` in the guest.
+- Known failures or untested behavior: neither dataset is approved as-is;
+  original licensing, phishing-specific labels, privacy cleaning and campaign
+  grouping remain gates. All test-VM checks remain open.
+- Decisions changed: broad spam labels are not accepted as phishing labels, and
+  the heavily overlapping Kaggle/Hugging Face aggregates will not be merged.

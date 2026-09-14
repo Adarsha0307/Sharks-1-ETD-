@@ -1,11 +1,13 @@
 # Setup And Verification
 
-Status: prepared, not executed
+Status: preparation partly executed; isolated verification not executed
 
 These commands are authorized only inside the Linux preparation/test VMs
-described by `sandbox/README.md`. They have not been run. Exact transitive npm
-and Python hash locks must be produced and reviewed in the preparation VM before
-the isolated run.
+described by `sandbox/README.md`. Node.js, Docker tooling, npm dependencies,
+Playwright Chromium and exact npm/Python locks have been prepared in
+`etd-prepare`. The three local application images now build successfully after
+fixing compile-time defects. No application test, fixture processing, model
+training or evaluation has run.
 
 ## Preparation VM
 
@@ -30,7 +32,7 @@ the isolated run.
 8. Generate SHA-256 values for every fixture and update `fixtures/manifest.json`
    before cloning the test VM.
 
-Example image-build commands, still NOT RUN:
+Image-build commands successfully run in `etd-prepare`:
 
 ```text
 docker build -f backend/Dockerfile -t etd-backend:local .
