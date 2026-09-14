@@ -41,7 +41,7 @@ async function recordAccess(pool: Pool, userId: string, analysisId: string, requ
   );
 }
 
-async function getAnalysis(pool: Pool, analysisIdValue: string | undefined, userId: string, redactBodies: boolean) {
+async function getAnalysis(pool: Pool, analysisIdValue: string | string[] | undefined, userId: string, redactBodies: boolean) {
   const id = z.string().uuid().safeParse(analysisIdValue);
   if (!id.success) throw new AppError(400, "invalid_id", "Identifier is invalid");
   const result = await pool.query(

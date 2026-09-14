@@ -4,7 +4,6 @@ export const SCORING_VERSION = "2026.09.1";
 
 const categoryCaps: Record<FindingCategory, number> = {
   sender: 25,
-  authentication: 15,
   url: 30,
   content: 40,
   attachment: 30,
