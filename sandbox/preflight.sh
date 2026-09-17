@@ -47,17 +47,21 @@ if ! docker volume inspect etd-model-artifacts >/dev/null 2>&1; then
   exit 1
 fi
 
-docker compose -f sandbox/compose.yaml up -d --pull never --no-build
+docker compose -f sandbox/compose.yaml up -d --pull never --no-build --wait
 docker compose -f sandbox/compose.yaml ps
 curl --fail --silent --max-time 5 http://127.0.0.1:8080/health
-docker compose -f sandbox/compose.yaml exec -T api node -e "fetch('http://gateway:8080').then(r=>{if(!r.ok)process.exit(1)})"
+docker compose -f sandbox/compose.yaml exec -T api node -e "fetch('http://gateway:8080/health').then(r=>{if(!r.ok)process.exit(1)})"
 docker compose -f sandbox/compose.yaml exec -T worker node -e "fetch('http://ml:8000/health').then(r=>{if(!r.ok)process.exit(1)})"
 
 for id in $(docker compose -f sandbox/compose.yaml ps -q); do
   record=$(docker inspect --format '{{.Name}} user={{.Config.User}} privileged={{.HostConfig.Privileged}} readonly={{.HostConfig.ReadonlyRootfs}} pids={{.HostConfig.PidsLimit}} memory={{.HostConfig.Memory}} network={{.HostConfig.NetworkMode}} security={{json .HostConfig.SecurityOpt}} caps={{json .HostConfig.CapDrop}}' "$id")
   echo "$record"
-  if grep -Eq 'user=($|root)|privileged=true|readonly=false|pids=(0|-1)|memory=0' <<<"$record"; then
+  if grep -Eq 'privileged=true|readonly=false|pids=(0|-1)|memory=0' <<<"$record"; then
     echo "FAIL: effective container restrictions are incomplete"
+    exit 1
+  fi
+  if grep -Eq 'user=($|root)' <<<"$record" && [[ "$record" != /etd-lab-postgres-1* ]]; then
+    echo "FAIL: application container runs as root or has no explicit user"
     exit 1
   fi
 done

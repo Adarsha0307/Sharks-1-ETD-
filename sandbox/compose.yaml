@@ -29,6 +29,7 @@ services:
     tmpfs:
       - /tmp:size=64m,mode=1777
       - /run:size=16m,mode=0755
+      - /var/run/postgresql:size=16m,mode=0775,uid=999,gid=999
     shm_size: 128m
     mem_limit: 768m
     memswap_limit: 768m
