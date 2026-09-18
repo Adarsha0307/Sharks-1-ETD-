@@ -3,7 +3,6 @@ name: etd-lab
 x-app-security: &app-security
   init: true
   read_only: true
-    restart: unless-stopped
   logging:
     driver: local
     options:
