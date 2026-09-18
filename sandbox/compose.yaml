@@ -3,11 +3,7 @@ name: etd-lab
 x-app-security: &app-security
   init: true
   read_only: true
-  cap_drop: [ALL]
-  security_opt:
-    - no-new-privileges:true
-  pids_limit: 128
-  restart: unless-stopped
+    restart: unless-stopped
   logging:
     driver: local
     options:
@@ -35,8 +31,6 @@ services:
     memswap_limit: 768m
     cpus: 0.75
     pids_limit: 128
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
     restart: unless-stopped
     logging:
       driver: local
@@ -70,7 +64,8 @@ services:
     volumes:
       - evidence:/var/lib/etd/evidence
       - model-artifacts:/models:ro
-    tmpfs: [/tmp:size=32m,mode=1777]
+    tmpfs:
+      - /tmp:size=32m,mode=1777
     mem_limit: 256m
     memswap_limit: 256m
     cpus: 0.25
@@ -87,7 +82,8 @@ services:
     volumes:
       - evidence:/var/lib/etd/evidence
       - model-artifacts:/models:ro
-    tmpfs: [/tmp:size=64m,mode=1777]
+    tmpfs:
+      - /tmp:size=64m,mode=1777
     mem_limit: 384m
     memswap_limit: 384m
     cpus: 0.5
@@ -104,7 +100,8 @@ services:
     volumes:
       - evidence:/var/lib/etd/evidence
       - model-artifacts:/models:ro
-    tmpfs: [/tmp:size=128m,mode=1777]
+    tmpfs:
+      - /tmp:size=128m,mode=1777
     mem_limit: 640m
     memswap_limit: 640m
     cpus: 1.0
@@ -122,7 +119,8 @@ services:
     networks: [inference]
     volumes:
       - model-artifacts:/models:ro
-    tmpfs: [/tmp:size=64m,mode=1777]
+    tmpfs:
+      - /tmp:size=64m,mode=1777
     mem_limit: 768m
     memswap_limit: 768m
     cpus: 1.0

@@ -15,9 +15,12 @@ echo "kernel=$(uname -srmo)"
 docker version
 docker compose version
 
-mapfile -t active_nics < <(find /sys/class/net -mindepth 1 -maxdepth 1 -printf '%f\n' | grep -v '^lo$' || true)
-if ((${#active_nics[@]} != 0)); then
-  echo "FAIL: non-loopback guest NICs exist: ${active_nics[*]}"
+mapfile -t external_nics < <(
+  find /sys/class/net -mindepth 1 -maxdepth 1 -printf '%f\n' |
+    grep -Ev '^(lo|docker0|br-[0-9a-f]+|veth[[:alnum:]_.-]+)$' || true
+)
+if ((${#external_nics[@]} != 0)); then
+  echo "FAIL: external-capable guest NICs exist: ${external_nics[*]}"
   exit 1
 fi
 

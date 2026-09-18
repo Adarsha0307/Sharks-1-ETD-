@@ -16,7 +16,7 @@ if (-not (Test-Path -LiteralPath $VmRoot -PathType Container)) {
 
 $prepareInfo = & $vboxManage showvminfo $PrepareName --machinereadable
 if ($LASTEXITCODE -ne 0) { throw "Preparation VM $PrepareName does not exist." }
-if ($prepareInfo -notmatch 'VMState="poweroff"') {
+if (($prepareInfo -join "`n") -notmatch '(?m)^VMState="poweroff"$') {
   throw "$PrepareName must be powered off before cloning."
 }
 
@@ -51,7 +51,7 @@ try {
     '^recording_enabled="on"'
   )
   foreach ($pattern in $prohibited) {
-    if ($testInfo -match $pattern) {
+    if (($testInfo -join "`n") -match $pattern) {
       throw "Test VM inspection failed for prohibited pattern: $pattern"
     }
   }
