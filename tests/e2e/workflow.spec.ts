@@ -30,7 +30,7 @@ test("sign in, upload, recover, inspect, history and export", async ({ page }) =
   await page.getByLabel("Password").fill(password!);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.getByRole("heading", { name: "Preserve and inspect an original email" })).toBeVisible();
-  await page.locator("#email-file").setInputFiles(resolve(process.cwd(), "fixtures/eml/credential-link.eml"));
+  await page.locator("#email-file").setInputFiles(resolve(process.cwd(), "..", "fixtures/eml/credential-link.eml"));
   await page.getByRole("button", { name: "Upload for analysis" }).click();
   await page.reload();
   await expect(page.getByText("Rules-based risk index")).toBeVisible({ timeout: 30_000 });

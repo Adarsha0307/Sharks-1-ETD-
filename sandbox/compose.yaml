@@ -145,7 +145,6 @@ services:
 
 networks:
   gateway:
-    internal: true
   data:
     internal: true
   inference:
