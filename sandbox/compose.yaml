@@ -52,7 +52,7 @@ services:
       ALLOWED_ORIGIN: http://127.0.0.1:8080
       SESSION_TTL_MINUTES: "480"
       COOKIE_SECURE: "false"
-      TRUST_PROXY: "true"
+      TRUST_PROXY: "false"
       ML_URL: http://ml:8000
       MODEL_MANIFEST_PATH: /models/model-manifest.json
       DNS_FIXTURE_PATH: /app/fixtures/dns.json
