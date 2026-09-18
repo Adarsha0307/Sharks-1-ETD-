@@ -58,12 +58,12 @@ export async function acceptEmailUpload(
       await client.query("UPDATE evidence_objects SET state = 'ready' WHERE id = $1", [evidenceId]);
       await client.query(
         `INSERT INTO analysis_jobs(id, email_id, user_id, kind, status, stage, max_attempts)
-         VALUES ($1, $2, $3, 'initial', 'queued', 'queued', $4)`,
+         VALUES ($1, $2, $3, 'initial', 'queued', 'queued', $4::integer)`,
         [jobId, emailId, userId, config.jobMaxAttempts],
       );
       await client.query(
         `INSERT INTO audit_events(id, user_id, event_type, resource_type, resource_id, outcome, details)
-         VALUES ($1, $2, 'email.upload', 'email', $3, 'success', jsonb_build_object('byteSize', $4))`,
+         VALUES ($1, $2, 'email.upload', 'email', $3, 'success', jsonb_build_object('byteSize', $4::bigint))`,
         [randomUUID(), userId, emailId, staged.byteSize],
       );
       await client.query("COMMIT");
@@ -141,7 +141,7 @@ async function stageMultipartUpload(request: IncomingMessage, config: Config): P
     try {
       busboy = Busboy({
         headers: request.headers,
-        limits: { files: 1, fields: 0, parts: 1, fileSize: config.uploadMaxBytes },
+        limits: { files: 1, fileSize: config.uploadMaxBytes },
       });
     } catch {
       void rm(path, { force: true }).finally(() => rejectPromise(new AppError(400, "invalid_multipart", "Multipart upload headers are invalid")));
@@ -178,7 +178,7 @@ async function stageMultipartUpload(request: IncomingMessage, config: Config): P
     parser.on("error", () => fail(new AppError(400, "invalid_multipart", "The multipart upload is malformed")));
     parser.on("close", () => {
       if (failed) return;
-      if (fileCount !== 1 || byteSize === 0 || !writeStream) {
+      if (fileCount !== 1 || !writeStream) {
         fail(new AppError(400, "invalid_upload", "Provide one non-empty email file"));
         return;
       }
