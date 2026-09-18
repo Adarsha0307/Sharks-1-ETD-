@@ -9,10 +9,10 @@
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "10.1.1",
-    "@playwright/test": "1.51.1",
+    "@playwright/test": "1.63.0",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
-    "vitest": "3.2.4",
+    "vitest": "3.2.7",
     "yaml": "2.8.0"
   }
 }
