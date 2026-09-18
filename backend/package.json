@@ -23,8 +23,8 @@
     "express-rate-limit": "7.5.0",
     "helmet": "8.1.0",
     "htmlparser2": "10.0.0",
-    "mailauth": "4.8.2",
-    "mailparser": "3.7.2",
+    "mailauth": "4.13.3",
+    "mailparser": "3.9.28",
     "pg": "8.16.0",
     "tldts": "6.1.86",
     "zod": "3.25.67"
@@ -40,6 +40,6 @@
     "supertest": "7.1.1",
     "tsx": "4.20.3",
     "typescript": "5.8.3",
-    "vitest": "3.2.4"
+    "vitest": "3.2.7"
   }
 }
