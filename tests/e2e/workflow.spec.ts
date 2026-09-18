@@ -23,9 +23,8 @@ test.afterEach(async ({ page }) => {
 });
 
 test("sign in, upload, recover, inspect, history and export", async ({ page }) => {
-  const username = process.env.ETD_E2E_USERNAME;
-  const password = process.env.ETD_E2E_PASSWORD;
-  test.skip(!username || !password, "Disposable sandbox credentials are required");
+  const username = process.env.ETD_E2E_USERNAME ?? "analyst";
+  const password = process.env.ETD_E2E_PASSWORD ?? "analyst-password";
   await page.goto("/");
   await page.getByLabel("Username").fill(username!);
   await page.getByLabel("Password").fill(password!);

@@ -151,7 +151,7 @@ export function createEmailsRouter(pool: Pool, config: Config): Router {
   return router;
 }
 
-function parseId(value: string | undefined): string {
+function parseId(value: string | string[] | undefined): string {
   const result = idSchema.safeParse(value);
   if (!result.success) throw new AppError(400, "invalid_id", "Identifier is invalid");
   return result.data;

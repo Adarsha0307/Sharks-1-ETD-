@@ -17,6 +17,7 @@ __pycache__/
 ml/artifacts/*.joblib
 ml/artifacts/*.json
 !ml/artifacts/.gitkeep
+ml/data/candidates/
 fixtures/generated/
 sandbox/reports/runtime/
 sandbox/secrets/

@@ -3,7 +3,8 @@
 Updated: 11 September 2026
 
 No executable application command has been run outside the required sandbox.
-Only repository, Git and host-capability inspection were executed on the host.
+The host performed repository/Git/hypervisor work; permitted dependency,
+packaging and inert dataset-preparation commands ran only in `etd-prepare`.
 
 ## Phase A - VERIFIED
 
@@ -25,20 +26,27 @@ Only repository, Git and host-capability inspection were executed on the host.
   preflight, scoped reset, evidence ledger and fail-closed VirtualBox VM
   provisioning/inspection helpers are prepared.
 - Files: `sandbox/compose.yaml`, `sandbox/README.md`,
-  `sandbox/hypervisor-checklist.md`, `sandbox/preflight.sh`, `sandbox/reset.sh`.
+  `sandbox/hypervisor-checklist.md`, `sandbox/preflight.sh`, `sandbox/reset.sh`,
+  `sandbox/reports/2026-09-14-preparation-artifacts.md`.
 - Host checks run: Docker Desktop 4.90.0/engine 29.7.2 and WSL 2 were verified
   operational during host preparation;
   VirtualBox 7.2.16 reports hardware virtualization support; the official
   Ubuntu ISO size/hash and the registered running VM configuration were directly
   re-inspected. The user reports Ubuntu 24.04.4 installation and console login.
 - Result: host prerequisites VERIFIED; preparation guest INSTALLED (login and
-  filesystem facts user-reported); test-guest isolation NOT VERIFIED.
-- Blocker: project transfer/dependency preparation are not confirmed, and
-  `etd-test` does not exist. No application test or fixture processing is
-  permitted yet.
-- Next: transfer an inspected source bundle through temporary media, prepare
-  reviewed dependencies/images, clone with all test NICs disabled, then execute
-  S01/S02 and snapshot/reset checks.
+  filesystem facts subsequently directly observed by SSH); test-guest isolation
+  NOT VERIFIED.
+- Preparation checks run: source Git bundle hash/revision, Ubuntu identity,
+  Node/Docker/Python versions, dependency-lock generation, Playwright browser
+  cache and candidate dataset hashes/structure were directly checked.
+- Result: the first image build reproduced TypeScript compile failures; minimal
+  source fixes were applied and backend, frontend and ML images then built
+  successfully in `etd-prepare`. This is packaging evidence, not application
+  test evidence.
+- Blocker: `etd-test` does not exist. No application test or fixture processing
+  is permitted yet.
+- Next: record image IDs/digests, remove temporary SSH/sudo access, clone with
+  all test NICs disabled, then execute S01/S02 and snapshot/reset checks.
 
 ## Phase C - IMPLEMENTED - NOT VERIFIED
 
@@ -117,9 +125,15 @@ Only repository, Git and host-capability inspection were executed on the host.
   unsupported-language outcomes.
 - Files: `ml/`, `backend/src/ml/client.ts`.
 - Sandbox checks run: none; model was not trained.
+- Preparation-only dataset review: the user-provided Kaggle primary and
+  Hugging Face alternative were downloaded, hash-verified and structurally
+  inspected in `etd-prepare` without training. They overlap substantially and
+  conflate spam with phishing, so neither aggregate nor its supplied splits is
+  approved as-is. See `docs/dataset-candidate-review.md`.
 - Blockers/untested: corpus is synthetic and cannot support real-world metrics;
-  dataset licensing/provenance, deduplication automation, model artifact and
-  actual evaluation remain incomplete.
+  original-source licensing remains unresolved for some candidate subsets;
+  phishing-specific relabeling, privacy cleaning, campaign deduplication, model
+  artifact and actual evaluation remain incomplete.
 - Next: approve a redistributable dataset, lock requirements, train once in the
   sandbox and report actual D08 metrics plus rules comparison.
 
@@ -145,6 +159,7 @@ but no result is claimed. Execution is NOT RUN.
 ## Phase K - IN PROGRESS
 
 Setup, reset, demo, limitations and phase records are prepared. Exact npm lock,
-hash-locked Python requirements, image digests, fixture hashes, approved model,
-fresh isolated-clone startup evidence and final PRD traceability remain blocked
-or incomplete. Handoff cannot pass its exit gate yet.
+hash-locked Python requirements and three local application images were
+generated in `etd-prepare`. Final recorded image digests, fixture hashes,
+approved model, fresh isolated-clone startup evidence and PRD traceability
+remain blocked or incomplete. Handoff cannot pass its exit gate yet.

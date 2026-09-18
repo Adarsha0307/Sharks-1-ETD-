@@ -1,12 +1,12 @@
 {
   "manifestVersion": "1",
-  "hashesVerified": false,
-  "note": "SHA-256 values must be generated and recorded inside the preparation VM before isolation.",
+  "hashesVerified": true,
+  "note": "SHA-256 values were generated from the repository fixture bytes during preparation before isolation.",
   "fixtures": [
-    { "id": "benign-basic", "path": "eml/benign-basic.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
-    { "id": "credential-link", "path": "eml/credential-link.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-001", "ETD-SENDER-003", "ETD-URL-001", "ETD-URL-002", "ETD-URL-003", "ETD-CONTENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
-    { "id": "forged-auth-pass", "path": "eml/forged-auth-pass.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-002"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
-    { "id": "benign-third-party", "path": "eml/benign-third-party.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": null },
-    { "id": "inert-double-extension", "path": "eml/inert-double-extension.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-ATTACHMENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": null }
+    { "id": "benign-basic", "path": "eml/benign-basic.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": "d892916b0b1cd9c53e9a0797e4e76c420cbe9cf1cd2d28e79a68e6cd362273bc" },
+    { "id": "credential-link", "path": "eml/credential-link.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-001", "ETD-SENDER-003", "ETD-URL-001", "ETD-URL-002", "ETD-URL-003", "ETD-CONTENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": "a71dde393640528a5aa587105af9ce9d1738ac755d8b3b06f68df62a6ae3a402" },
+    { "id": "forged-auth-pass", "path": "eml/forged-auth-pass.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-SENDER-002"], "expectedUnavailable": ["spf", "dmarc"], "sha256": "6ec3f0cb7f8fea8000ead2c32edf533f1d51cb3d418ca62166437908392e54ad" },
+    { "id": "benign-third-party", "path": "eml/benign-third-party.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": [], "expectedUnavailable": ["spf", "dmarc"], "sha256": "147874b4f14f0532b3f2f724e1a64a3dfd5bfefa763cab365253e4ab73841129" },
+    { "id": "inert-double-extension", "path": "eml/inert-double-extension.eml", "synthetic": true, "license": "Repository license", "language": "en", "expectedFindings": ["ETD-ATTACHMENT-001"], "expectedUnavailable": ["spf", "dmarc"], "sha256": "aa9f76417442782b6c98679d62a1d788903f7be310b6f0a36c9de8016270dbb7" }
   ]
 }

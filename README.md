@@ -12,10 +12,13 @@ a ranking, not a probability. Low risk does not guarantee safety.
 ## Current Status
 
 Phase-a repository/host audit is verified. Source increments for phases b-i are
-implemented but not verified. Phase b is blocked because this machine has no
-available supported VM/hypervisor tooling; therefore all application tests,
-model training, image builds and fixture processing remain NOT RUN as required
-by `testing.md`. See `docs/phase-status.md` and `docs/limitations.md`.
+implemented but not verified. VirtualBox and the connected `etd-prepare` Ubuntu
+VM are available; reviewed tool installation, dependency locking and artifact
+caching are in progress there. The disconnected `etd-test` VM and isolation
+preflight are not complete, so all application tests, fixture processing and
+model training/evaluation remain NOT RUN as required by `testing.md`. See
+`docs/phase-status.md`, `docs/dataset-candidate-review.md` and
+`docs/limitations.md`.
 
 ## Layout
 
