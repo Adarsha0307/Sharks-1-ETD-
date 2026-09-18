@@ -32,7 +32,6 @@ test("sign in, upload, recover, inspect, history and export", async ({ page }) =
   await expect(page.getByRole("heading", { name: "Preserve and inspect an original email" })).toBeVisible();
   await page.locator("#email-file").setInputFiles(resolve(process.cwd(), "..", "fixtures/eml/credential-link.eml"));
   await page.getByRole("button", { name: "Upload for analysis" }).click();
-  await page.reload();
   await expect(page.getByText("Rules-based risk index")).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("ETD-CONTENT-001")).toBeVisible();
   const download = page.waitForEvent("download");
