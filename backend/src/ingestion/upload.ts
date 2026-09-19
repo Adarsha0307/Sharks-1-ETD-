@@ -158,6 +158,11 @@ async function stageMultipartUpload(request: IncomingMessage, config: Config): P
         return;
       }
       originalFilename = sanitizeFilename(info.filename);
+      if (!originalFilename.toLowerCase().endsWith(".eml")) {
+        file.resume();
+        fail(new AppError(400, "invalid_upload", "Only .eml files are allowed"));
+        return;
+      }
       writeStream = createWriteStream(path, { flags: "w", mode: 0o600, autoClose: true });
       file.on("data", (chunk: Buffer) => {
         byteSize += chunk.byteLength;

@@ -10,6 +10,7 @@ export function UploadView({ job, onAccepted }: { job: Job | null; onAccepted(jo
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".eml")) { setError("Only .eml files are allowed."); return; }
     if (file.size > 10 * 1024 * 1024) { setError("The selected file exceeds the 10 MB upload limit."); return; }
     setSubmitting(true);
     setError(null);
