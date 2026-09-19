@@ -10,7 +10,6 @@ export function UploadView({ job, onAccepted }: { job: Job | null; onAccepted(jo
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".eml")) { setError("Only .eml files are allowed."); return; }
     if (file.size > 10 * 1024 * 1024) { setError("The selected file exceeds the 10 MB upload limit."); return; }
     setSubmitting(true);
     setError(null);
@@ -29,12 +28,12 @@ export function UploadView({ job, onAccepted }: { job: Job | null; onAccepted(jo
       <section className="panel p-6 sm:p-9">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-moss">New analysis</p>
         <h2 className="mt-3 text-3xl font-black tracking-tight">Preserve and inspect an original email</h2>
-        <p className="mt-3 max-w-2xl leading-7 text-ink/70">Choose one authorized or synthetic <code>.eml</code> file. The server validates structure, hashes original bytes, stores evidence under a generated name, and queues bounded analysis.</p>
+        <p className="mt-3 max-w-2xl leading-7 text-ink/70">Choose a file (e.g., .eml, text, pdf, image). The server validates structure, hashes original bytes, stores evidence under a generated name, and queues bounded analysis.</p>
         <form className="mt-8" onSubmit={(event) => void submit(event)}>
           <label className="block rounded-xl border-2 border-dashed border-moss/35 bg-emerald-50/50 p-6 text-center transition-colors hover:border-moss" htmlFor="email-file">
-            <span className="block text-lg font-bold">Select an .eml file</span>
+            <span className="block text-lg font-bold">Select a file</span>
             <span className="mt-2 block text-sm text-ink/65">Maximum original size: 10 MB</span>
-            <input className="mt-5 block w-full cursor-pointer text-sm" id="email-file" type="file" accept=".eml,message/rfc822" onChange={(event) => setFile(event.target.files?.[0] ?? null)} required />
+            <input className="mt-5 block w-full cursor-pointer text-sm" id="email-file" type="file" accept=".eml,message/rfc822,text/plain,application/pdf,image/*" onChange={(event) => setFile(event.target.files?.[0] ?? null)} required />
           </label>
           {file && <p className="mt-4 break-all text-sm"><strong>Selected:</strong> {file.name} ({formatBytes(file.size)})</p>}
           {error && <p className="mt-4 rounded-lg border border-danger/30 bg-red-50 p-3 text-sm text-danger" role="alert">{error}</p>}
