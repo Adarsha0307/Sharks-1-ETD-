@@ -27,9 +27,6 @@ interface MailAttachmentPart {
 export async function parseEmailFile(path: string, config: Config): Promise<ParsedEmail> {
   const raw = await readBounded(path, config.uploadMaxBytes);
   const headers = parseRawHeaders(raw);
-  if (!headers.some((header) => ["from", "date", "message-id", "mime-version"].includes(header.name))) {
-    throw new AppError(400, "invalid_eml", "Input does not contain recognizable email headers");
-  }
 
   const parser = new MailParser({
     skipHtmlToText: true,
